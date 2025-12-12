@@ -136,9 +136,11 @@ LOGIN_PASSWORD=your_secure_password_here
 - `DEBUG`: Đặt `False` khi deploy production
 - `LOGIN_PASSWORD`: Đặt mật khẩu mạnh
 
-### 2. Upload file `credentials.json`
+### 2. Upload file `credentials.json` (Tùy chọn - Chỉ cần nếu muốn đồng bộ Google Sheets)
 
-Upload file `credentials.json` (từ Google Cloud Console) vào thư mục `/var/www/dash/Home/`:
+**Lưu ý quan trọng:** Ứng dụng có thể chạy hoàn toàn offline với file xlsx local. File `credentials.json` **KHÔNG BẮT BUỘC** nếu bạn chỉ muốn dùng file xlsx.
+
+Nếu muốn đồng bộ với Google Sheets, upload file `credentials.json` (từ Google Cloud Console) vào thư mục `/var/www/dash/Home/`:
 
 ```bash
 # Sử dụng scp từ máy local

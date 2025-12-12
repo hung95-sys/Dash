@@ -160,10 +160,13 @@ PYTHON_EOF
     echo -e "${YELLOW}   Bạn có thể upload file xlsx có sẵn để thay thế file này${NC}"
 fi
 
-# Kiểm tra xem có file credentials.json chưa
+# Thông báo về credentials.json (không bắt buộc nếu chỉ dùng file xlsx)
 if [ ! -f "credentials.json" ]; then
-    echo -e "${YELLOW}⚠️  File credentials.json chưa tồn tại!${NC}"
-    echo -e "${YELLOW}   Vui lòng upload file credentials.json vào thư mục: $HOME_DIR${NC}"
+    echo -e "${GREEN}ℹ️  Ứng dụng sẽ chạy ở chế độ offline với file xlsx local${NC}"
+    echo -e "${GREEN}   File credentials.json KHÔNG BẮT BUỘC nếu chỉ dùng file xlsx${NC}"
+    echo -e "${YELLOW}   Nếu muốn đồng bộ với Google Sheets, upload credentials.json vào: $HOME_DIR${NC}"
+else
+    echo -e "${GREEN}✅ Đã tìm thấy file credentials.json${NC}"
 fi
 
 # Tạo file cấu hình Nginx mẫu
@@ -217,11 +220,13 @@ if systemctl is-active --quiet $SERVICE_NAME; then
     echo ""
     echo "📝 Các bước tiếp theo:"
     echo "   1. Chỉnh sửa file .env: nano $HOME_DIR/.env"
-    echo "   2. Upload file credentials.json vào: $HOME_DIR/"
-    echo "   3. Chỉnh sửa Nginx config: nano /etc/nginx/sites-available/dash"
+    echo "      (Đặt LOGIN_PASSWORD mạnh hơn)"
+    echo "   2. Upload file xlsx vào: $HOME_DIR/data/export_all.xlsx (nếu có)"
+    echo "   3. (Tùy chọn) Upload credentials.json nếu muốn đồng bộ Google Sheets"
+    echo "   4. Chỉnh sửa Nginx config: nano /etc/nginx/sites-available/dash"
     echo "      (Thay 'server_name _;' bằng domain của bạn)"
-    echo "   4. Restart service: systemctl restart $SERVICE_NAME"
-    echo "   5. Restart Nginx: systemctl restart nginx"
+    echo "   5. Restart service: systemctl restart $SERVICE_NAME"
+    echo "   6. Restart Nginx: systemctl restart nginx"
     echo ""
     echo "🔍 Kiểm tra logs:"
     echo "   journalctl -u $SERVICE_NAME -f"
