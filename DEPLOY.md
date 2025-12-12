@@ -2,6 +2,36 @@
 
 Hướng dẫn chi tiết để deploy ứng dụng Flask từ GitHub lên server Linux (Ubuntu/Debian).
 
+## ⚡ Cài đặt tự động (Khuyến nghị)
+
+**Chỉ cần chạy 1 lệnh duy nhất trên server:**
+
+```bash
+wget -O - https://raw.githubusercontent.com/hung95-sys/Dash/main/install.sh | sudo bash
+```
+
+Hoặc nếu server không có wget:
+
+```bash
+curl -sSL https://raw.githubusercontent.com/hung95-sys/Dash/main/install.sh | sudo bash
+```
+
+Script sẽ tự động:
+- ✅ Cài đặt Python, pip, git, nginx
+- ✅ Clone code từ GitHub
+- ✅ Tạo virtual environment và cài dependencies
+- ✅ Tạo file .env mẫu
+- ✅ Tạo systemd service
+- ✅ Cấu hình Nginx
+- ✅ Khởi động ứng dụng
+
+**Sau khi chạy xong, bạn chỉ cần:**
+1. Chỉnh sửa file `.env` với thông tin của bạn
+2. Upload file `credentials.json` vào thư mục `/var/www/dash/Home/`
+3. Restart service: `sudo systemctl restart dash-app`
+
+---
+
 ## 📋 Yêu cầu
 
 - Server Linux (Ubuntu 20.04+ hoặc Debian 11+)
