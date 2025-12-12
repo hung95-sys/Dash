@@ -24,9 +24,14 @@ cd $APP_DIR
 if [ -d ".git" ]; then
     echo "📥 Pull code mới nhất từ GitHub..."
     git pull origin $BRANCH
+elif [ -d "Dash/.git" ]; then
+    echo "📥 Pull code từ thư mục Dash..."
+    cd Dash
+    git pull origin $BRANCH
+    cd ..
 else
     echo "📥 Clone repository từ GitHub..."
-    if [ "$(ls -A $APP_DIR)" ]; then
+    if [ "$(ls -A $APP_DIR 2>/dev/null)" ]; then
         echo "⚠️  Thư mục không trống. Đang xóa và clone lại..."
         cd ..
         sudo rm -rf $APP_DIR
@@ -36,8 +41,22 @@ else
     git clone $REPO_URL $APP_DIR
 fi
 
+# Xử lý trường hợp có thư mục Dash bên trong
+if [ -d "Dash" ] && [ ! -d "Home" ]; then
+    echo "📦 Phát hiện thư mục Dash, đang di chuyển nội dung..."
+    sudo mv Dash/* Dash/.* . 2>/dev/null || true
+    sudo rmdir Dash 2>/dev/null || true
+fi
+
 # Di chuyển vào thư mục Home
-cd Home
+if [ -d "Home" ]; then
+    cd Home
+elif [ -d "Dash/Home" ]; then
+    cd Dash/Home
+else
+    echo "❌ Không tìm thấy thư mục Home!"
+    exit 1
+fi
 
 # Tạo virtual environment nếu chưa có
 if [ ! -d "venv" ]; then

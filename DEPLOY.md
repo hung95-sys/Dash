@@ -35,11 +35,19 @@ cd /var/www
 sudo git clone https://github.com/hung95-sys/Dash.git dash
 cd dash
 
-# Kiểm tra cấu trúc thư mục (sẽ thấy thư mục Home)
+# Kiểm tra cấu trúc thư mục
 ls -la
+# Nếu thấy thư mục Dash (chữ D hoa), cần vào Dash/Home
+# Nếu thấy thư mục Home trực tiếp, vào Home
 
-# Di chuyển vào thư mục Home
-cd Home
+# Trường hợp 1: Có thư mục Dash bên trong
+cd Dash/Home
+
+# Hoặc nếu muốn di chuyển lên cấp trên (khuyến nghị):
+# cd /var/www/dash
+# sudo mv Dash/* Dash/.* . 2>/dev/null || true
+# sudo rmdir Dash
+# cd Home
 
 # Tạo virtual environment
 python3 -m venv venv
@@ -250,7 +258,7 @@ chmod 600 /var/www/dash/Home/credentials.json
 
 ### Lỗi "cd: Home: No such file or directory"
 
-**Nguyên nhân:** Repository chưa được clone đúng cách hoặc đang ở sai thư mục.
+**Nguyên nhân:** Repository chưa được clone đúng cách hoặc đang ở sai thư mục. Git có thể tạo thư mục `Dash` (chữ D hoa) bên trong `dash`.
 
 **Cách khắc phục:**
 
@@ -261,15 +269,24 @@ pwd
 
 # Kiểm tra cấu trúc thư mục
 ls -la
-# Phải thấy thư mục Home
 
-# Nếu không thấy thư mục Home, clone lại:
+# Trường hợp 1: Thấy thư mục Dash (chữ D hoa)
+cd Dash/Home  # Vào đúng thư mục
+
+# Trường hợp 2: Muốn di chuyển lên cấp trên để tránh nhầm lẫn
+cd /var/www/dash
+sudo mv Dash/* Dash/.* . 2>/dev/null || true  # Di chuyển tất cả
+sudo rmdir Dash  # Xóa thư mục Dash trống
+cd Home  # Bây giờ vào được
+
+# Trường hợp 3: Không thấy gì cả, clone lại:
 cd /var/www
-sudo rm -rf dash  # Xóa thư mục cũ nếu có
+sudo rm -rf dash
 sudo git clone https://github.com/hung95-sys/Dash.git dash
 cd dash
-ls -la  # Kiểm tra lại, phải thấy thư mục Home
-cd Home  # Bây giờ sẽ vào được
+ls -la  # Kiểm tra cấu trúc
+# Nếu thấy Dash, vào Dash/Home
+# Nếu thấy Home, vào Home
 ```
 
 ### Ứng dụng không chạy
