@@ -26,7 +26,14 @@ if [ -d ".git" ]; then
     git pull origin $BRANCH
 else
     echo "📥 Clone repository từ GitHub..."
-    git clone $REPO_URL .
+    if [ "$(ls -A $APP_DIR)" ]; then
+        echo "⚠️  Thư mục không trống. Đang xóa và clone lại..."
+        cd ..
+        sudo rm -rf $APP_DIR
+        sudo mkdir -p $APP_DIR
+        sudo chown -R $USER:$USER $APP_DIR
+    fi
+    git clone $REPO_URL $APP_DIR
 fi
 
 # Di chuyển vào thư mục Home

@@ -30,9 +30,13 @@ sudo chown -R $USER:$USER /var/www/dash
 ### Cách 1: Deploy thủ công
 
 ```bash
-# Clone repository
-cd /var/www/dash
-git clone https://github.com/hung95-sys/Dash.git .
+# Tạo thư mục và clone repository
+cd /var/www
+sudo git clone https://github.com/hung95-sys/Dash.git dash
+cd dash
+
+# Kiểm tra cấu trúc thư mục (sẽ thấy thư mục Home)
+ls -la
 
 # Di chuyển vào thư mục Home
 cd Home
@@ -243,6 +247,30 @@ chmod 600 /var/www/dash/Home/credentials.json
 ```
 
 ## 🐛 Troubleshooting
+
+### Lỗi "cd: Home: No such file or directory"
+
+**Nguyên nhân:** Repository chưa được clone đúng cách hoặc đang ở sai thư mục.
+
+**Cách khắc phục:**
+
+```bash
+# Kiểm tra bạn đang ở đâu
+pwd
+# Phải là /var/www/dash
+
+# Kiểm tra cấu trúc thư mục
+ls -la
+# Phải thấy thư mục Home
+
+# Nếu không thấy thư mục Home, clone lại:
+cd /var/www
+sudo rm -rf dash  # Xóa thư mục cũ nếu có
+sudo git clone https://github.com/hung95-sys/Dash.git dash
+cd dash
+ls -la  # Kiểm tra lại, phải thấy thư mục Home
+cd Home  # Bây giờ sẽ vào được
+```
 
 ### Ứng dụng không chạy
 
