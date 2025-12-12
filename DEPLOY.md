@@ -4,7 +4,7 @@ Hướng dẫn chi tiết để deploy ứng dụng Flask từ GitHub lên serve
 
 ## ⚡ Cài đặt tự động (Khuyến nghị)
 
-**Chỉ cần chạy 1 lệnh duy nhất trên server:**
+**Cách 1: Chạy trực tiếp (Khuyến nghị)**
 
 ```bash
 wget -O - https://raw.githubusercontent.com/hung95-sys/Dash/main/install.sh | sudo bash
@@ -14,6 +14,18 @@ Hoặc nếu server không có wget:
 
 ```bash
 curl -sSL https://raw.githubusercontent.com/hung95-sys/Dash/main/install.sh | sudo bash
+```
+
+**Cách 2: Tải về rồi chạy (Giống install_docker.sh)**
+
+```bash
+wget https://raw.githubusercontent.com/hung95-sys/Dash/main/install.sh && sed -i -e 's/\r$//' install.sh && chmod u+x install.sh && sudo ./install.sh
+```
+
+Hoặc với curl:
+
+```bash
+curl -O https://raw.githubusercontent.com/hung95-sys/Dash/main/install.sh && sed -i -e 's/\r$//' install.sh && chmod u+x install.sh && sudo ./install.sh
 ```
 
 Script sẽ tự động:
