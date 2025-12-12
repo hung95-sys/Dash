@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi tiêu</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+</head>
+<body class="chi-tieu-page">
+    <div class="chi-header">
+        <div class="chi-tabs">
+            <button class="chi-tab active" id="tab-chi">Chi tiêu</button>
+            <button class="chi-tab" id="tab-thu">Thu nhập</button>
+        </div>
+        <div class="chi-user">
+            <a class="chi-home-link" href="/">← Trang chủ</a>
+            <span>👤 {{ display_name }}</span>
+        </div>
+    </div>
+
+    <!-- Panel Chi / Thu -->
+    <div class="chi-container" id="panel-chi">
+        <div class="chi-field">
+            <label>Ngày</label>
+            <div class="chi-input with-icon">
+                <input type="date" id="chi-date" value="{{ today }}" data-today="{{ today }}">
+                <span class="chi-icon">📅</span>
+            </div>
+        </div>
+
+        <div class="chi-field">
+            <label>Ghi chú</label>
+            <input type="text" class="chi-input" id="chi-note" placeholder="Thêm ghi chú">
+        </div>
+
+        <div class="chi-field">
+            <label>Tiền chi</label>
+            <input type="text" inputmode="numeric" class="chi-input" id="chi-amount" placeholder="0">
+        </div>
+
+        <div class="chi-field">
+            <label>Danh mục</label>
+            <div class="chi-grid" id="chi-grid">
+                <div class="chi-cat placeholder">Đang tải...</div>
+            </div>
+        </div>
+
+        <div class="chi-field" id="chi-purpose-field" style="display:none;">
+            <label>Mục đích quỹ</label>
+            <select class="chi-input" id="chi-purpose">
+                <option value="">Chọn mục đích...</option>
+            </select>
+        </div>
+
+        <button class="chi-submit" id="chi-submit-btn">Nhập khoản Tiền chi</button>
+    </div>
+
+    <!-- Panel Lịch -->
+    <div class="chi-container" id="panel-lich" style="display:none;">
+        <div class="chi-field">
+            <label>Lịch tháng</label>
+            <div class="lich-header">
+                <button class="lich-nav" id="lich-prev">‹</button>
+                <button class="lich-title" id="lich-title">{{ "%02d" % month }}/{{ year }}</button>
+                <button class="lich-nav" id="lich-next">›</button>
+            </div>
+            <div id="lich-calendar" class="lich-calendar"></div>
+            <input type="hidden" id="lich-month" value="{{ month }}">
+            <input type="hidden" id="lich-year" value="{{ year }}">
+            <input type="month" id="lich-month-picker" value="{{ year }}-{{ '%02d' % month }}" style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;border:0;padding:0;margin:0;">
+            <input type="date" id="lich-date" style="display:none;">
+            <div class="lich-tip">Chạm vào ngày để xem chi tiết</div>
+        </div>
+
+        <div class="lich-summary" id="lich-summary">
+            <div class="lich-summary-item income">
+                <div class="label">Thu nhập</div>
+                <div class="value" id="lich-sum-income">0</div>
+            </div>
+            <div class="lich-summary-item expense">
+                <div class="label">Chi tiêu</div>
+                <div class="value" id="lich-sum-expense">0</div>
+            </div>
+            <div class="lich-summary-item total">
+                <div class="label">Tổng</div>
+                <div class="value" id="lich-sum-balance">0</div>
+            </div>
+        </div>
+
+        <div id="lich-list" class="lich-list">
+            <div class="chi-cat placeholder">Đang tải...</div>
+        </div>
+    </div>
+
+    <!-- Panel Báo cáo -->
+    <div class="chi-container" id="panel-report" style="display:none;">
+        <div class="chi-field">
+            <label>Báo cáo 5 năm (Thu / Chi / Quỹ)</label>
+            <div class="report-card">
+                <canvas id="report-chart" height="240"></canvas>
+                <div id="report-years" class="report-years" style="margin-top:1rem;">
+                    <div class="chi-cat placeholder">Đang tải...</div>
+                </div>
+            </div>
+        </div>
+        <div class="chi-field">
+            <label>Báo cáo tháng trong năm hiện tại</label>
+            <div class="report-card">
+                <canvas id="report-chart-monthly" height="240"></canvas>
+                <div id="report-months" class="report-years" style="margin-top:1rem;">
+                    <div class="chi-cat placeholder">Đang tải...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Panel Khác - Quản lý danh mục -->
+    <div class="chi-container" id="panel-other" style="display:none;">
+        <div class="chi-field">
+            <label>Quản lý danh mục</label>
+            
+            <!-- Tabs chọn loại danh mục -->
+            <div class="category-tabs">
+                <button class="cat-tab active" data-cat-type="Thu">Thu</button>
+                <button class="cat-tab" data-cat-type="Chi">Chi</button>
+                <button class="cat-tab" data-cat-type="Quỹ">Quỹ</button>
+            </div>
+            
+            <!-- Form thêm/sửa -->
+            <div class="category-form">
+                <input type="hidden" id="cat-edit-mode" value="false">
+                <input type="hidden" id="cat-old-name" value="">
+                <div class="chi-field">
+                    <label>Icon</label>
+                    <div class="icon-picker-wrapper">
+                        <input type="text" class="chi-input" id="cat-icon" placeholder="Chọn hoặc nhập icon" readonly>
+                        <div class="icon-picker-grid" id="icon-picker-grid" style="display:none;"></div>
+                    </div>
+                </div>
+                <div class="chi-field">
+                    <label>Tên danh mục</label>
+                    <input type="text" class="chi-input" id="cat-name" placeholder="Nhập tên danh mục">
+                </div>
+                <div class="category-form-actions">
+                    <button class="chi-submit" id="cat-submit-btn" type="button">Thêm</button>
+                    <button class="chi-submit btn-secondary" id="cat-cancel-btn" type="button" style="display:none;">Hủy</button>
+                </div>
+            </div>
+            
+            <!-- Danh sách danh mục -->
+            <div class="category-list" id="category-list">
+                <div class="chi-cat placeholder">Đang tải...</div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="chi-bottom">
+        <button class="chi-bottom-item active" data-tab="Entry">
+            <span class="icon">✏️</span>
+            <span>Nhập vào</span>
+        </button>
+        <button class="chi-bottom-item" data-tab="Lich">
+            <span class="icon">📅</span>
+            <span>Lịch</span>
+        </button>
+        <button class="chi-bottom-item" data-tab="Report">
+            <span class="icon">📊</span>
+            <span>Báo cáo</span>
+        </button>
+        <button class="chi-bottom-item" data-tab="Other">
+            <span class="icon">⋯</span>
+            <span>Khác</span>
+        </button>
+    </nav>
+
+    <script>
+        window.LICH_DEFAULT_MONTH = "{{ month }}";
+        window.LICH_DEFAULT_YEAR = "{{ year }}";
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="{{ url_for('static', filename='js/chi_tieu.js') }}"></script>
+</body>
+</html>
+

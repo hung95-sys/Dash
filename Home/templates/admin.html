@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản trị tài khoản</title>
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="admin-page">
+    <header class="admin-appbar">
+        <div class="admin-appbar__left">
+            <div class="admin-appbar__title">Quản trị tài khoản</div>
+            <div class="admin-appbar__subtitle">Quản lý user, phân quyền, kích hoạt</div>
+        </div>
+        <div class="admin-appbar__actions">
+            <a class="btn btn-ghost" href="{{ url_for('home') }}">← Trang chủ</a>
+            <a class="btn btn-secondary btn-ghost" href="{{ url_for('logout') }}">Đăng xuất</a>
+        </div>
+    </header>
+
+    <main class="admin-main">
+        <section class="admin-card">
+            <div class="admin-card__header">
+                <div>
+                    <p class="eyebrow">Bảng điều khiển</p>
+                    <h2 class="admin-card__title">Tài khoản</h2>
+                </div>
+                <div class="admin-actions">
+                    <a class="btn btn-ghost" href="{{ url_for('export_spreadsheet') }}" target="_blank" rel="noopener">Tải toàn bộ .xlsx</a>
+                    <label for="import-file-input" class="btn btn-ghost" style="cursor:pointer;">Import .xlsx</label>
+                    <input type="file" id="import-file-input" accept=".xlsx" style="display:none;">
+                    <button id="btn-sync-to-sheet" class="btn btn-warning">Đẩy đè lên Sheet</button>
+                    <button id="btn-refresh-accounts" class="btn btn-secondary">Tải lại</button>
+                    <button id="btn-open-create" class="btn btn-primary">+ Thêm tài khoản</button>
+                </div>
+            </div>
+            <div class="admin-table-wrapper">
+                <table class="admin-table" id="accounts-table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Name</th>
+                            <th>Role</th>
+                            <th>Active</th>
+                            <th style="text-align:right;">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody id="accounts-body">
+                        <tr><td colspan="5" style="text-align:center;">Đang tải...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal tạo/sửa tài khoản -->
+    <div class="modal" id="account-modal" style="display:none;">
+        <div class="modal-content admin-modal">
+            <div class="modal-header">
+                <h3 id="account-modal-title">Thêm tài khoản</h3>
+                <button class="modal-close" id="close-account-modal" aria-label="Đóng">✕</button>
+            </div>
+            <form id="account-form" class="admin-form">
+                <input type="hidden" id="account-row-id" value="">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="account-username">Username *</label>
+                        <input type="text" id="account-username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="account-password">Password *</label>
+                        <input type="text" id="account-password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for "account-name">Name</label>
+                        <input type="text" id="account-name" placeholder="Tên hiển thị / tên sheet">
+                    </div>
+                    <div class="form-group">
+                        <label for="account-role">Role</label>
+                        <select id="account-role">
+                            <option value="user">user</option>
+                            <option value="admin">admin</option>
+                        </select>
+                    </div>
+                    <div class="form-group checkbox">
+                        <label><input type="checkbox" id="account-active" checked> Active</label>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="close-account-modal-secondary">Hủy</button>
+                    <button type="submit" class="btn btn-primary" id="account-submit-btn">Lưu</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+</body>
+</html>
+

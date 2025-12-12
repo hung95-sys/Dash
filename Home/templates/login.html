@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập - Trang Web Cá Nhân</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/pwa-icon.svg') }}">
+    <meta name="theme-color" content="#0f172a">
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1>🔐 Đăng nhập</h1>
+            <p>Chỉ có bạn mới xem và chỉnh sửa được dữ liệu tài chính của mình.</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="card" style="max-width: 480px; margin: 0 auto;">
+            <h2 class="card-title">Tài khoản</h2>
+            {% if error %}
+                <div class="alert alert-error">{{ error }}</div>
+            {% endif %}
+            <form method="post">
+                <div class="form-group">
+                    <label class="form-label" for="username">Tên đăng nhập</label>
+                    <input type="text" id="username" name="username" class="form-control" required autofocus>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="password">Mật khẩu</label>
+                    <input type="password" id="password" name="password" class="form-control" required>
+                </div>
+                <div class="d-flex justify-between gap-2">
+                    <a href="https://example.com" style="visibility: hidden;">.</a>
+                    <button type="submit" class="btn btn-primary">Đăng nhập</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/static/sw.js', { scope: '/' })
+                .catch(err => console.error('SW registration failed:', err));
+        });
+    }
+</script>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Trang Web Cá Nhân</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/pwa-icon.svg') }}">
+    <meta name="theme-color" content="#0f172a">
+</head>
+<body>
+    <div class="header">
+        <div class="container header-row">
+            <div>
+                <h1>📊 Dashboard Cá Nhân</h1>
+                <p>Quản lý tài chính và cuộc sống của bạn một cách thông minh</p>
+            </div>
+            <div class="header-actions">
+                <div class="user-menu" id="home-user-menu">
+                    <button class="user-trigger" id="home-user-trigger">
+                        <span class="user-avatar">{{ (display_name or current_user.id or 'A')[0]|upper }}</span>
+                        <span class="user-name">{{ display_name or current_user.id }}</span>
+                        <span class="user-chevron">▾</span>
+                    </button>
+                    <div class="user-dropdown" id="home-user-dropdown" style="display:none;">
+                        <button type="button" class="user-item" id="home-change-password">🔑 Đổi mật khẩu</button>
+                        {% if current_user.is_authenticated and (current_user.role|default('user')) == 'admin' %}
+                        <a href="/admin" class="user-item">⚙️ Quản trị</a>
+                        {% endif %}
+                        <div class="user-divider"></div>
+                        <a href="{{ url_for('logout') }}" class="user-item">🚪 Đăng xuất</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <nav class="nav">
+            <a href="/" class="active">🏠 Trang chủ</a>
+            <a href="/chi-tieu">💸 Chi tiêu</a>
+            <a href="#">📝 Ghi chú</a>
+            <a href="#">📅 Lịch</a>
+        </nav>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card income animate-fade-in-up-1">
+                <div class="stat-label">💵 Tổng Thu</div>
+                <div class="stat-value" id="total-income">
+                    {{ "{:,.0f}".format(summary.total_income) if summary else "0" }}
+                </div>
+            </div>
+            <div class="stat-card expense animate-fade-in-up-2">
+                <div class="stat-label">💸 Tổng Chi</div>
+                <div class="stat-value" id="total-expense">
+                    {{ "{:,.0f}".format(summary.total_expense) if summary else "0" }}
+                </div>
+            </div>
+            <div class="stat-card balance animate-fade-in-up-3">
+                <div class="stat-label">💰 Số Dư</div>
+                <div class="stat-value" id="balance">
+                    {{ "{:,.0f}".format(summary.balance) if summary else "0" }}
+                </div>
+            </div>
+            <div class="stat-card fund animate-fade-in-up-4">
+                <div class="stat-label">📦 Tổng Quỹ</div>
+                <div class="stat-value" id="total-fund">
+                    {{ "{:,.0f}".format(summary.total_fund) if summary and summary.total_fund else "0" }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Quỹ Summary -->
+        <div class="card animate-fade-in-up-4">
+            <h2 class="card-title">📦 Quỹ (tất cả loại)</h2>
+            <div id="quy-summary">
+                <div class="loading">Đang tải...</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Modal đổi mật khẩu -->
+    <div class="modal" id="change-password-modal" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Đổi mật khẩu</h3>
+                <button class="modal-close" id="close-change-password" aria-label="Đóng">✕</button>
+            </div>
+            <form id="change-password-form">
+                <div class="form-group">
+                    <label for="old-password">Mật khẩu cũ</label>
+                    <input type="password" id="old-password" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-password">Mật khẩu mới</label>
+                    <input type="password" id="new-password" required>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="close-change-password-secondary">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/home.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/change_password.js') }}"></script>
+    <script>
+        (function() {
+            // User dropdown toggle
+            const trigger = document.getElementById('home-user-trigger');
+            const dropdown = document.getElementById('home-user-dropdown');
+            if (trigger && dropdown) {
+                trigger.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+                });
+                document.addEventListener('click', (e) => {
+                    if (!dropdown.contains(e.target) && !trigger.contains(e.target)) {
+                        dropdown.style.display = 'none';
+                    }
+                });
+            }
+            // Open change password modal from dropdown
+            const openChangePass = document.getElementById('home-change-password');
+            if (openChangePass) {
+                openChangePass.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const modal = document.getElementById('change-password-modal');
+                    if (modal) modal.style.display = 'block';
+                });
+            }
+            // Service worker
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('/static/sw.js', { scope: '/' })
+                        .catch(err => console.error('SW registration failed:', err));
+                });
+            }
+        })();
+    </script>
+</body>
+</html>
+
