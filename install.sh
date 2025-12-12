@@ -132,10 +132,11 @@ EOF
 systemctl daemon-reload
 systemctl enable $SERVICE_NAME > /dev/null 2>&1
 
-# Tạo thư mục data nếu chưa có
+# Tạo thư mục data nếu chưa có và set quyền
 DATA_DIR="$HOME_DIR/data"
 mkdir -p $DATA_DIR
 chown -R www-data:www-data $DATA_DIR
+chmod -R 755 $DATA_DIR
 
 # Kiểm tra và tạo file xlsx mẫu nếu chưa có
 if [ ! -f "$DATA_DIR/export_all.xlsx" ]; then
@@ -156,9 +157,17 @@ if not os.path.exists(xlsx_path):
 PYTHON_EOF
     deactivate
     chown www-data:www-data "$DATA_DIR/export_all.xlsx"
+    chmod 644 "$DATA_DIR/export_all.xlsx"
     echo -e "${GREEN}✅ File xlsx đã được tạo tại: $DATA_DIR/export_all.xlsx${NC}"
     echo -e "${YELLOW}   Bạn có thể upload file xlsx có sẵn để thay thế file này${NC}"
 fi
+
+# Đảm bảo quyền cho toàn bộ thư mục Home
+echo -e "${GREEN}🔐 Thiết lập quyền cho thư mục ứng dụng...${NC}"
+chown -R www-data:www-data $HOME_DIR
+chmod -R 755 $HOME_DIR
+chmod 600 "$HOME_DIR/.env" 2>/dev/null || true
+chmod 644 "$HOME_DIR/credentials.json" 2>/dev/null || true
 
 # Thông báo về credentials.json (không bắt buộc nếu chỉ dùng file xlsx)
 if [ ! -f "credentials.json" ]; then
