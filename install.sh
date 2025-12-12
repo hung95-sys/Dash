@@ -132,6 +132,34 @@ EOF
 systemctl daemon-reload
 systemctl enable $SERVICE_NAME > /dev/null 2>&1
 
+# Tạo thư mục data nếu chưa có
+DATA_DIR="$HOME_DIR/data"
+mkdir -p $DATA_DIR
+chown -R www-data:www-data $DATA_DIR
+
+# Kiểm tra và tạo file xlsx mẫu nếu chưa có
+if [ ! -f "$DATA_DIR/export_all.xlsx" ]; then
+    echo -e "${YELLOW}📊 Tạo file xlsx mẫu...${NC}"
+    source venv/bin/activate
+    python3 << PYTHON_EOF
+import os
+from openpyxl import Workbook
+
+data_dir = "$DATA_DIR"
+xlsx_path = os.path.join(data_dir, 'export_all.xlsx')
+
+if not os.path.exists(xlsx_path):
+    wb = Workbook()
+    wb.remove(wb.active)  # Xóa sheet mặc định
+    wb.save(xlsx_path)
+    print(f"Đã tạo file xlsx tại: {xlsx_path}")
+PYTHON_EOF
+    deactivate
+    chown www-data:www-data "$DATA_DIR/export_all.xlsx"
+    echo -e "${GREEN}✅ File xlsx đã được tạo tại: $DATA_DIR/export_all.xlsx${NC}"
+    echo -e "${YELLOW}   Bạn có thể upload file xlsx có sẵn để thay thế file này${NC}"
+fi
+
 # Kiểm tra xem có file credentials.json chưa
 if [ ! -f "credentials.json" ]; then
     echo -e "${YELLOW}⚠️  File credentials.json chưa tồn tại!${NC}"

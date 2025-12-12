@@ -148,6 +148,36 @@ scp credentials.json user@your-server:/var/www/dash/Home/
 nano /var/www/dash/Home/credentials.json
 ```
 
+### 3. Upload file xlsx (Tùy chọn)
+
+Nếu bạn có file xlsx có sẵn dữ liệu, upload vào thư mục `/var/www/dash/Home/data/`:
+
+**Cách 1: Sử dụng scp (từ máy local)**
+
+```bash
+scp export_all.xlsx user@your-server:/var/www/dash/Home/data/export_all.xlsx
+```
+
+**Cách 2: Sử dụng SFTP**
+
+```bash
+sftp user@your-server
+cd /var/www/dash/Home/data
+put export_all.xlsx
+exit
+```
+
+**Cách 3: Upload qua web interface (Sau khi deploy xong)**
+
+1. Đăng nhập vào ứng dụng với quyền admin
+2. Vào trang Admin
+3. Sử dụng chức năng "Import Excel" để upload file xlsx
+
+**Lưu ý:**
+- File xlsx phải có tên `export_all.xlsx`
+- Nếu không upload, ứng dụng sẽ tự động tạo file xlsx trống khi chạy lần đầu
+- Đảm bảo file có quyền phù hợp: `sudo chown www-data:www-data /var/www/dash/Home/data/export_all.xlsx`
+
 ## 🔄 Tạo Systemd Service
 
 ### 1. Copy file service
