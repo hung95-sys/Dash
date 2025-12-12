@@ -1,0 +1,26 @@
+[Unit]
+Description=Dash Flask Application
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/dash/Home
+Environment="PATH=/var/www/dash/Home/venv/bin"
+ExecStart=/var/www/dash/Home/venv/bin/python /var/www/dash/Home/app.py
+Restart=always
+RestartSec=10
+
+# Security
+NoNewPrivileges=true
+PrivateTmp=true
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=dash-app
+
+[Install]
+WantedBy=multi-user.target
+
