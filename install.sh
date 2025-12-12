@@ -79,7 +79,9 @@ fi
 echo -e "${GREEN}📦 Cài đặt Python dependencies...${NC}"
 source venv/bin/activate
 pip install --upgrade pip -q > /dev/null 2>&1
-pip install -r requirements.txt -q > /dev/null 2>&1
+pip install -r requirements.txt
+# Đảm bảo openpyxl được cài đặt
+pip install openpyxl==3.1.2
 deactivate
 
 # Tạo file .env nếu chưa có
